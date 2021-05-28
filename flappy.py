@@ -224,6 +224,8 @@ def mainGame(movementInfo):
     playerRotThr  =  20   # rotation threshold
     playerFlapAcc =  -14   # players speed on flapping
     playerFlapped = False # True when player flaps
+    
+    windVelY = getRandomWind() #get random wind speed
 
 
     while True:
@@ -234,16 +236,15 @@ def mainGame(movementInfo):
             
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if playery > -2 * IMAGES['player'][0].get_height():
-                    playerVelY += playerFlapAcc
+                    playerVelY += playerFlapAcc - windVelY ####
                     playerFlapped = True
                     SOUNDS['wing'].play()
             
-
+            
         flap, traj = solve(playery, playerVelY, lowerPipes)
 
-
         if flap:
-            playerVelY += playerFlapAcc
+            playerVelY += playerFlapAcc - windVelY #####
             playerFlapped = True
             SOUNDS['wing'].play()
 
@@ -269,6 +270,7 @@ def mainGame(movementInfo):
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 score += 1
                 print(score)
+                windVelY = getRandomWind() # wind changes when player cross the pipe
                 SOUNDS['point'].play()
 
         # playerIndex basex change
@@ -333,9 +335,32 @@ def mainGame(movementInfo):
         playerOffsetX = IMAGES['player'][0].get_width() / 2
         playerOffsetY = IMAGES['player'][0].get_height() / 2
 
+        drawWindDirection(windVelY)
+
         pygame.draw.lines(SCREEN, (255,0,0), False, [(x+playerOffsetX,y+playerOffsetY) for (x,y) in traj], 3)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+
+     #   pygame.draw.lines(SCREEN, (255,0,0), False, [(x+playerOffsetX,y+playerOffsetY) for (x,y) in traj], 3)
+
+def getRandomWind():
+    """get random wind"""
+    windSpeed = random.randrange(-9,10)
+    print("windSpeed: ",windSpeed)
+    return windSpeed
+
+def drawWindDirection(windVelY):
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    textsurface = myfont.render(str(windVelY)+'m/s', False, (0, 0, 0))
+    SCREEN.blit(textsurface,(140,450))
+    if windVelY >=0:
+        #draw upper wind
+        pygame.draw.polygon(SCREEN,(255,0,0),[[250,440],[230,470],[270,470]])
+        pygame.draw.rect(SCREEN, (255,0,0),[243,460,15,35])
+    else:
+        #draw Lower wind
+        pygame.draw.polygon(SCREEN,(255,0,0),[[250,500],[230,470],[270,470]])
+        pygame.draw.rect(SCREEN, (255,0,0),[243,445,15,35])
 
 
 def showGameOverScreen(crashInfo):
@@ -389,8 +414,6 @@ def showGameOverScreen(crashInfo):
 
         SCREEN.blit(IMAGES['base'], (basex, BASEY))
         showScore(score)
-
-        
 
 
         playerSurface = pygame.transform.rotate(IMAGES['player'][1], playerRot)

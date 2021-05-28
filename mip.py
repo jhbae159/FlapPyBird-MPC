@@ -63,9 +63,10 @@ def solve(playery, playerVelY, lowerPipes):
     objective = cvx.Minimize(cvx.sum(cvx.abs(vy)) + 100* obj)
 
     prob = cvx.Problem(objective, c) # init the problem
+
     try:
-        #prob.solve(verbose = False) # use this line for open source solvers
-        prob.solve(verbose = False, solver="GUROBI") # use this line if you have access to Gurobi, a faster solver
+        prob.solve(verbose = False) # use this line for open source solvers
+        #prob.solve(verbose = False, solver="GUROBI") # use this line if you have access to Gurobi, a faster solver
 
         last_path = list(zip(xs, y.value)) # store the path
         last_solution = np.round(flap.value).astype(bool) # store the solution
