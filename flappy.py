@@ -225,7 +225,7 @@ def mainGame(movementInfo):
     playerFlapAcc =  -14   # players speed on flapping
     playerFlapped = False # True when player flaps
     
-    windVelY = getRandomWind() #get random wind speed
+    windAccY = getRandomWind() #get random wind speed
 
 
     while True:
@@ -236,7 +236,7 @@ def mainGame(movementInfo):
             
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if playery > -2 * IMAGES['player'][0].get_height():
-                    playerVelY += playerFlapAcc - windVelY ####
+                    playerVelY += playerFlapAcc  
                     playerFlapped = True
                     SOUNDS['wing'].play()
             
@@ -244,7 +244,7 @@ def mainGame(movementInfo):
         flap, traj = solve(playery, playerVelY, lowerPipes)
 
         if flap:
-            playerVelY += playerFlapAcc - windVelY #####
+            playerVelY += playerFlapAcc 
             playerFlapped = True
             SOUNDS['wing'].play()
 
@@ -270,7 +270,7 @@ def mainGame(movementInfo):
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 score += 1
                 print(score)
-                windVelY = getRandomWind() # wind changes when player cross the pipe
+                windAccY = getRandomWind() # wind changes when player cross the pipe
                 SOUNDS['point'].play()
 
         # playerIndex basex change
@@ -285,7 +285,7 @@ def mainGame(movementInfo):
 
         # player's movement
         #if playerVelY < playerMaxVelY and not playerFlapped:
-        playerVelY += playerAccY
+        playerVelY += playerAccY + windAccY
         if playerFlapped:
             playerFlapped = False
 
@@ -335,7 +335,7 @@ def mainGame(movementInfo):
         playerOffsetX = IMAGES['player'][0].get_width() / 2
         playerOffsetY = IMAGES['player'][0].get_height() / 2
 
-        drawWindDirection(windVelY)
+        drawWindDirection(int(windAccY*10))
 
         pygame.draw.lines(SCREEN, (255,0,0), False, [(x+playerOffsetX,y+playerOffsetY) for (x,y) in traj], 3)
         pygame.display.update()
@@ -345,15 +345,15 @@ def mainGame(movementInfo):
 
 def getRandomWind():
     """get random wind"""
-    windSpeed = random.randrange(-9,10)
-    print("windSpeed: ",windSpeed)
+    windSpeed = random.randrange(-9,10)/10
+    print("windSpeed: ",-windSpeed)
     return windSpeed
 
-def drawWindDirection(windVelY):
+def drawWindDirection(windAccY):
     myfont = pygame.font.SysFont('Comic Sans MS', 30)
-    textsurface = myfont.render(str(windVelY)+'m/s', False, (0, 0, 0))
-    SCREEN.blit(textsurface,(140,450))
-    if windVelY >=0:
+    textsurface = myfont.render(str(-windAccY)+' m/s', False, (0, 0, 0))
+    SCREEN.blit(textsurface,(125,450))
+    if windAccY <=0:
         #draw upper wind
         pygame.draw.polygon(SCREEN,(255,0,0),[[250,440],[230,470],[270,470]])
         pygame.draw.rect(SCREEN, (255,0,0),[243,460,15,35])
