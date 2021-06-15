@@ -32,7 +32,7 @@ def getPipeConstraintsDistance(x, y, lowerPipes):
             pipe_dist += cvx.abs(pipe['y'] - (PIPEGAPSIZE//2) - (BIRDDIAMETER//2) - y) # add distance from center
     return constraints, pipe_dist
 
-def solve(playery, playerVelY, lowerPipes, windAccYList):
+def solve3(playery, playerVelY, lowerPipes, windAccYList):
 
     pipeVelX = -4 # speed in x
     playerAccY    =   1   # players downward accleration
@@ -59,7 +59,8 @@ def solve(playery, playerVelY, lowerPipes, windAccYList):
     windAccY = windAccYList_tmp[0]
 
     for t in range(N-1): # look ahead
-        dt = t//15 + 1 # let time get coarser further in the look ahead
+        # dt = t//15 + 1 # let time get coarser further in the look ahead\
+        dt = t//10 + 1 # let time get coarser further in the look ahead
         x -= dt * pipeVelX # update x
         xs += [x] # add to list
         c += [vy[t + 1] ==  vy[t] + playerAccY * dt + playerFlapAcc * flap[t] + windAccY * dt] # add y velocity constraint, f=ma
@@ -80,7 +81,7 @@ def solve(playery, playerVelY, lowerPipes, windAccYList):
     prob = cvx.Problem(objective, c) # init the problem
 
     try:
-        prob.solve(verbose = True) # use this line for open source solvers
+        prob.solve(verbose = False) # use this line for open source solvers
         #prob.solve(verbose = False, solver="GUROBI") # use this line if you have access to Gurobi, a faster solver
 
         last_path = list(zip(xs, y.value)) # store the path

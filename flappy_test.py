@@ -1,11 +1,13 @@
 from itertools import cycle
 from mip import solve
+from mip2 import solve2
+from mip3 import solve3
 import random
 import sys
 
 import pygame
 from pygame.locals import *
-
+import csv 
 
 FPS = 30
 SCREENWIDTH  = 288
@@ -96,6 +98,7 @@ def main():
     SOUNDS['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
     SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
 
+    it = 0
     while True:
         # select random background sprites
         randBg = random.randint(0, len(BACKGROUNDS_LIST) - 1)
@@ -130,9 +133,20 @@ def main():
             getHitmask(IMAGES['player'][2]),
         )
 
-        movementInfo = showWelcomeAnimation()
-        crashInfo = mainGame(movementInfo)
-        showGameOverScreen(crashInfo)
+        #movementInfo = showWelcomeAnimation()
+        movementInfo = {
+                    'playery': 241,
+                    'basex': -28,
+                    'playerIndexGen': cycle([0, 1, 2, 1]),
+                }
+        solveOpt = it // 30 + 1
+        crashInfo = mainGame(movementInfo,solveOpt)
+
+        with open('result.csv', 'a') as fd:
+            output = csv.writer(fd)
+            output.writerow([solveOpt, int(crashInfo['score'])])
+        #showGameOverScreen(crashInfo)
+        it += 1
 
 
 def showWelcomeAnimation():
@@ -188,7 +202,7 @@ def showWelcomeAnimation():
         FPSCLOCK.tick(FPS)
 
 
-def mainGame(movementInfo):
+def mainGame(movementInfo, solveOption):
     score = playerIndex = loopIter = 0
     playerIndexGen = movementInfo['playerIndexGen']
     playerx, playery = int(SCREENWIDTH * 0.2), movementInfo['playery']
@@ -242,10 +256,18 @@ def mainGame(movementInfo):
                     playerVelY += playerFlapAcc  
                     playerFlapped = True
                     SOUNDS['wing'].play()
-            
-            
-        flap, traj = solve(playery, playerVelY, lowerPipes, windAccYList)
+        print(windAccYList)
+        # Number of time step(N) : 24, Coefficient for making further time coarse :15
+        if solveOption == 1:
+            flap, traj = solve(playery, playerVelY, lowerPipes, windAccYList)
+        # Number of time step(N) : 40, Coefficient for making further time coarse :15
+        if solveOption == 2:
+            flap, traj = solve2(playery, playerVelY, lowerPipes, windAccYList)
+        # Number of time step(N) : 24, Coefficient for making further time coarse :10
+        if solveOption == 3:
+            flap, traj = solve3(playery, playerVelY, lowerPipes, windAccYList)
 
+        
         if flap:
             playerVelY += playerFlapAcc 
             playerFlapped = True
@@ -265,14 +287,12 @@ def mainGame(movementInfo):
                 'playerVelY': playerVelY,
                 'playerRot': playerRot
             }
-
         # check for score
         playerMidPos = playerx + IMAGES['player'][0].get_width() / 2
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 score += 1
-                print(score)
                 windAccY = getRandomWind(windAccYList) # wind changes when player cross the pipe
                 SOUNDS['point'].play()
 

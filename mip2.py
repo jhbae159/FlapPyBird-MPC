@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import copy 
 
 
-N = 24 # time steps to look ahead
+N = 40 # time steps to look ahead
 path = cvx.Variable((N, 2)) # initialize the y pos and y velocity
 flap = cvx.Variable(N-1, boolean=True) # initialize the inputs, whether or not the bird should flap in each step
 last_solution = [False, False, False] # seed last solution
@@ -32,7 +32,7 @@ def getPipeConstraintsDistance(x, y, lowerPipes):
             pipe_dist += cvx.abs(pipe['y'] - (PIPEGAPSIZE//2) - (BIRDDIAMETER//2) - y) # add distance from center
     return constraints, pipe_dist
 
-def solve(playery, playerVelY, lowerPipes, windAccYList):
+def solve2(playery, playerVelY, lowerPipes, windAccYList):
 
     pipeVelX = -4 # speed in x
     playerAccY    =   1   # players downward accleration
@@ -80,7 +80,7 @@ def solve(playery, playerVelY, lowerPipes, windAccYList):
     prob = cvx.Problem(objective, c) # init the problem
 
     try:
-        prob.solve(verbose = True) # use this line for open source solvers
+        prob.solve(verbose = False) # use this line for open source solvers
         #prob.solve(verbose = False, solver="GUROBI") # use this line if you have access to Gurobi, a faster solver
 
         last_path = list(zip(xs, y.value)) # store the path
