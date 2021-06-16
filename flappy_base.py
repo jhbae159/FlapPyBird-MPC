@@ -144,7 +144,7 @@ def main():
 
         with open('result.csv', 'a') as fd:
             output = csv.writer(fd)
-            output.writerow([solveOpt, int(crashInfo['score'])])
+            output.writerow(["base", int(crashInfo['score'])])
         #showGameOverScreen(crashInfo)
         it += 1
 
@@ -258,14 +258,14 @@ def mainGame(movementInfo, solveOption):
                     SOUNDS['wing'].play()
         print(windAccYList)
         # Number of time step(N) : 24, Coefficient for objective term in objective function: 100
-        if solveOption == 1:
-            flap, traj = solve(playery, playerVelY, lowerPipes, windAccYList)
-        # Number of time step(N) : 40, Coefficient for objective term in objective function: 100
-        if solveOption == 2:
-            flap, traj = solve2(playery, playerVelY, lowerPipes, windAccYList)
-        # Number of time step(N) : 24, Coefficient for objective term in objective function: 200
-        if solveOption == 3:
-            flap, traj = solve3(playery, playerVelY, lowerPipes, windAccYList)
+        # # if solveOption == 1:
+        #     # flap, traj = solve(playery, playerVelY, lowerPipes, windAccYList)
+        # # Number of time step(N) : 40, Coefficient for objective term in objective function: 100
+        # if solveOption == 2:
+        #     flap, traj = solve2(playery, playerVelY, lowerPipes, windAccYList)
+        # # Number of time step(N) : 24, Coefficient for objective term in objective function: 200
+        # if solveOption == 3:
+        #     flap, traj = solve3(playery, playerVelY, lowerPipes, windAccYList)
 
         
         # if flap:
@@ -360,7 +360,7 @@ def mainGame(movementInfo, solveOption):
 
         drawWindDirection(int(windAccY*10))
 
-        pygame.draw.lines(SCREEN, (255,0,0), False, [(x+playerOffsetX,y+playerOffsetY) for (x,y) in traj], 3)
+        #pygame.draw.lines(SCREEN, (255,0,0), False, [(x+playerOffsetX,y+playerOffsetY) for (x,y) in traj], 3)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
