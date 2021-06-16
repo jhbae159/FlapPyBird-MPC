@@ -36,7 +36,7 @@ def solve3(playery, playerVelY, lowerPipes, windAccYList):
 
     pipeVelX = -4 # speed in x
     playerAccY    =   1   # players downward accleration
-    playerFlapAcc =  -14   # players speed on flapping
+    playerFlapAcc =   -9    # players speed on flapping
 
     # unpack path variables
     y = path[:,0]
@@ -59,8 +59,7 @@ def solve3(playery, playerVelY, lowerPipes, windAccYList):
     windAccY = windAccYList_tmp[0]
 
     for t in range(N-1): # look ahead
-        # dt = t//15 + 1 # let time get coarser further in the look ahead\
-        dt = t//10 + 1 # let time get coarser further in the look ahead
+        dt = t//15 + 1 # let time get coarser further in the look ahead
         x -= dt * pipeVelX # update x
         xs += [x] # add to list
         c += [vy[t + 1] ==  vy[t] + playerAccY * dt + playerFlapAcc * flap[t] + windAccY * dt] # add y velocity constraint, f=ma
@@ -76,7 +75,7 @@ def solve3(playery, playerVelY, lowerPipes, windAccYList):
             windAccY = windAccYList_tmp[0]
 
     #objective = cvx.Minimize(cvx.sum(flap) + 10* cvx.sum(cvx.abs(vy))) # minimize total flaps and y velocity
-    objective = cvx.Minimize(cvx.sum(cvx.abs(vy)) + 100* obj)
+    objective = cvx.Minimize(cvx.sum(cvx.abs(vy)) + 200* obj)
 
     prob = cvx.Problem(objective, c) # init the problem
 

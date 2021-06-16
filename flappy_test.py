@@ -139,7 +139,7 @@ def main():
                     'basex': -28,
                     'playerIndexGen': cycle([0, 1, 2, 1]),
                 }
-        solveOpt = it // 30 + 1
+        solveOpt = it // 30 + 2
         crashInfo = mainGame(movementInfo,solveOpt)
 
         with open('result.csv', 'a') as fd:
@@ -229,14 +229,14 @@ def mainGame(movementInfo, solveOption):
     pipeVelX = -4
 
     # player velocity, max velocity, downward accleration, accleration on flap
-    playerVelY    =  -9   # player's velocity along Y, default same as playerFlapped
+    playerVelY    =  0   # player's velocity along Y, default same as playerFlapped
     playerMaxVelY =  10   # max vel along Y, max descend speed
     playerMinVelY =  -8   # min vel along Y, max ascend speed
     playerAccY    =   1   # players downward accleration
     playerRot     =  45   # player's rotation
     playerVelRot  =   3   # angular speed
     playerRotThr  =  20   # rotation threshold
-    playerFlapAcc =  -14   # players speed on flapping
+    playerFlapAcc =  -9  # players speed on flapping
     playerFlapped = False # True when player flaps
     
     #get random wind speed
@@ -257,13 +257,13 @@ def mainGame(movementInfo, solveOption):
                     playerFlapped = True
                     SOUNDS['wing'].play()
         print(windAccYList)
-        # Number of time step(N) : 24, Coefficient for making further time coarse :15
+        # Number of time step(N) : 24, Coefficient for objective term in objective function: 100
         if solveOption == 1:
             flap, traj = solve(playery, playerVelY, lowerPipes, windAccYList)
-        # Number of time step(N) : 40, Coefficient for making further time coarse :15
+        # Number of time step(N) : 40, Coefficient for objective term in objective function: 100
         if solveOption == 2:
             flap, traj = solve2(playery, playerVelY, lowerPipes, windAccYList)
-        # Number of time step(N) : 24, Coefficient for making further time coarse :10
+        # Number of time step(N) : 24, Coefficient for objective term in objective function: 200
         if solveOption == 3:
             flap, traj = solve3(playery, playerVelY, lowerPipes, windAccYList)
 

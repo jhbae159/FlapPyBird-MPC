@@ -36,7 +36,7 @@ def solve(playery, playerVelY, lowerPipes, windAccYList):
 
     pipeVelX = -4 # speed in x
     playerAccY    =   1   # players downward accleration
-    playerFlapAcc =  -14   # players speed on flapping
+    playerFlapAcc =  -9   # players speed on flapping
 
     # unpack path variables
     y = path[:,0]
@@ -80,7 +80,7 @@ def solve(playery, playerVelY, lowerPipes, windAccYList):
     prob = cvx.Problem(objective, c) # init the problem
 
     try:
-        prob.solve(verbose = True) # use this line for open source solvers
+        prob.solve(verbose = False) # use this line for open source solvers
         #prob.solve(verbose = False, solver="GUROBI") # use this line if you have access to Gurobi, a faster solver
 
         last_path = list(zip(xs, y.value)) # store the path

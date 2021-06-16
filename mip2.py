@@ -36,7 +36,7 @@ def solve2(playery, playerVelY, lowerPipes, windAccYList):
 
     pipeVelX = -4 # speed in x
     playerAccY    =   1   # players downward accleration
-    playerFlapAcc =  -14   # players speed on flapping
+    playerFlapAcc =   -9    # players speed on flapping
 
     # unpack path variables
     y = path[:,0]
