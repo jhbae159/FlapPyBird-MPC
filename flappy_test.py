@@ -268,10 +268,10 @@ def mainGame(movementInfo, solveOption):
             flap, traj = solve3(playery, playerVelY, lowerPipes, windAccYList)
 
         
-        # if flap:
-        #     playerVelY += playerFlapAcc 
-        #     playerFlapped = True
-        #     SOUNDS['wing'].play()
+        if flap:
+            playerVelY += playerFlapAcc 
+            playerFlapped = True
+            SOUNDS['wing'].play()
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
